@@ -2,7 +2,8 @@
 import InputError from '@/components/InputError.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { edit, index, update } from '@/routes/employees';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { User, Mail, Briefcase, Building2, ArrowLeft, Save } from 'lucide-vue-next';
 
 const props = defineProps<{
     employee: {
@@ -22,7 +23,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.put(update(props.employee.id));
+    form.put(update(props.employee.id).url);
 };
 </script>
 
@@ -31,59 +32,112 @@ const submit = () => {
     <Head title="Edit Employee" />
 
     <AppLayout :breadcrumbs="[
-        { title: 'Employees', href: index() },
-        { title: 'Edit', href: edit(props.employee.id) },
+        { title: 'Employees', href: index().url },
+        { title: 'Edit', href: edit(props.employee.id).url },
     ]">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    Edit Employee
-                </h2>
+            <!-- Header -->
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        Edit Employee
+                    </h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Update employee information and details.
+                    </p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <Link :href="index().url"
+                        class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                        <ArrowLeft class="h-4 w-4" />
+                        Back to List
+                    </Link>
+                </div>
             </div>
 
-            <div class="max-w-2xl overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+            <!-- Form Card -->
+            <div
+                class="mx-auto w-full max-w-2xl rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
+                <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+                    <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">Employee Details</h3>
+                </div>
+
+                <div class="p-6">
                     <form @submit.prevent="submit" class="space-y-6">
-                        <div>
-                            <label for="name"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-                            <input id="name" v-model="form.name" type="text"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600"
-                                required />
-                            <InputError :message="form.errors.name" class="mt-2" />
+                        <div class="grid gap-6 md:grid-cols-2">
+                            <!-- Name -->
+                            <div class="col-span-2">
+                                <label for="name"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
+                                <div class="relative mt-1">
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <User class="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <input id="name" v-model="form.name" type="text"
+                                        class="block w-full rounded-lg border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm border py-2"
+                                        placeholder="John Doe" required />
+                                </div>
+                                <InputError :message="form.errors.name" class="mt-2" />
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-span-2">
+                                <label for="email"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email
+                                    Address</label>
+                                <div class="relative mt-1">
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <Mail class="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <input id="email" v-model="form.email" type="email"
+                                        class="block w-full rounded-lg border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm border py-2"
+                                        placeholder="john@example.com" required />
+                                </div>
+                                <InputError :message="form.errors.email" class="mt-2" />
+                            </div>
+
+                            <!-- Position -->
+                            <div>
+                                <label for="position"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Position</label>
+                                <div class="relative mt-1">
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <Briefcase class="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <input id="position" v-model="form.position" type="text"
+                                        class="block w-full rounded-lg border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm border py-2"
+                                        placeholder="Software Engineer" required />
+                                </div>
+                                <InputError :message="form.errors.position" class="mt-2" />
+                            </div>
+
+                            <!-- Department -->
+                            <div>
+                                <label for="department"
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department</label>
+                                <div class="relative mt-1">
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <Building2 class="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <input id="department" v-model="form.department" type="text"
+                                        class="block w-full rounded-lg border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm border py-2"
+                                        placeholder="Engineering" required />
+                                </div>
+                                <InputError :message="form.errors.department" class="mt-2" />
+                            </div>
                         </div>
 
-                        <div>
-                            <label for="email"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                            <input id="email" v-model="form.email" type="email"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600"
-                                required />
-                            <InputError :message="form.errors.email" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <label for="position"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Position</label>
-                            <input id="position" v-model="form.position" type="text"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600"
-                                required />
-                            <InputError :message="form.errors.position" class="mt-2" />
-                        </div>
-
-                        <div>
-                            <label for="department"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department</label>
-                            <input id="department" v-model="form.department" type="text"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600"
-                                required />
-                            <InputError :message="form.errors.department" class="mt-2" />
-                        </div>
-
-                        <div class="flex items-center justify-end">
+                        <div
+                            class="flex items-center justify-end gap-3 border-t border-gray-100 pt-6 dark:border-gray-700">
+                            <Link :href="index().url"
+                                class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                                Cancel
+                            </Link>
                             <button type="submit" :disabled="form.processing"
-                                class="inline-flex items-center rounded-md border border-transparent bg-gray-800 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 dark:bg-gray-200 dark:text-gray-800 dark:hover:bg-white dark:focus:bg-white dark:focus:ring-offset-gray-800 dark:active:bg-gray-300">
-                                Update Employee
+                                class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100">
+                                <Save class="h-4 w-4" />
+                                <span v-if="form.processing">Saving...</span>
+                                <span v-else>Save Changes</span>
                             </button>
                         </div>
                     </form>
