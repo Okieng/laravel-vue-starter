@@ -30,7 +30,7 @@ class EmployeeController extends Controller
             $direction = $request->input('direction', 'asc');
             $query->orderBy($sort, $direction);
         } else {
-            $query->orderBy('created_at', 'desc');
+            $query->orderBy('name', 'asc');
         }
 
         return Inertia::render('Employees/Index', [

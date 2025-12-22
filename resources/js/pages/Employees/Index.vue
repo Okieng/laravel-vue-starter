@@ -211,7 +211,7 @@ const getInitials = (name: string) => {
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div
-                                        class="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+                                        class="flex items-center justify-end gap-2 transition-opacity">
                                         <Link :href="edit(employee.id).url"
                                             class="rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-gray-700 dark:hover:text-blue-400"
                                             title="Edit">
