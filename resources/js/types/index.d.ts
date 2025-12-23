@@ -37,3 +37,20 @@ export interface User {
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
+
+export interface Feed {
+    id: number;
+    user_id: number;
+    user: User;
+    type: 'post' | 'event' | 'project_update' | 'social';
+    content: string;
+    title?: string;
+    event_date?: string;
+    images?: string[];
+    file_attachment?: string[];
+    is_pinned: boolean;
+    likes_count: number;
+    comments_count: number;
+    created_at: string;
+    updated_at: string;
+}
