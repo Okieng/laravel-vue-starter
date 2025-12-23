@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Feed;
+use Inertia\Inertia;
 
 class CalendarController extends Controller
 {

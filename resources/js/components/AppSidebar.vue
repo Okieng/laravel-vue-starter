@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
-import NavUser from '@/components/NavUser.vue';
 import {
     Sidebar,
     SidebarContent,
@@ -14,11 +13,14 @@ import {
 import { dashboard } from '@/routes';
 import { index as employeesIndex } from '@/routes/employees';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, Calendar, Folder, LayoutGrid, Users } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { usePage, Link } from '@inertiajs/vue3';
+import { BookOpen, Calendar, Folder, LayoutGrid, MessageCircle, Users } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
+const page = usePage();
+
+const mainNavItems = computed(() => [
     {
         title: 'Dashboard',
         href: dashboard(),
@@ -34,7 +36,13 @@ const mainNavItems: NavItem[] = [
         href: '/calendar',
         icon: Calendar,
     },
-];
+    {
+        title: 'Chat',
+        href: '/chat',
+        icon: MessageCircle,
+        badge: page.props.auth.unreadMessageCount as number,
+    },
+]);
 
 const footerNavItems: NavItem[] = [
     {
@@ -70,7 +78,6 @@ const footerNavItems: NavItem[] = [
 
         <SidebarFooter>
             <NavFooter :items="footerNavItems" />
-            <NavUser />
         </SidebarFooter>
     </Sidebar>
     <slot />

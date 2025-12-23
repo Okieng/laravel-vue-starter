@@ -3,6 +3,7 @@ import type { LucideIcon } from 'lucide-vue-next';
 
 export interface Auth {
     user: User;
+    unreadMessageCount?: number;
 }
 
 export interface BreadcrumbItem {
@@ -15,6 +16,7 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon;
     isActive?: boolean;
+    badge?: number | string;
 }
 
 export type AppPageProps<
@@ -34,6 +36,8 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+    unread_count?: number;
+    is_active?: boolean;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
@@ -54,4 +58,15 @@ export interface Feed {
     comments_count: number;
     created_at: string;
     updated_at: string;
+}
+
+export interface Message {
+    id: number;
+    sender_id: number;
+    sender?: User;
+    receiver_id: number;
+    receiver?: User;
+    content: string;
+    read_at?: string;
+    created_at: string;
 }

@@ -17,6 +17,9 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('chat', [\App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::get('chat/{user}', [\App\Http\Controllers\ChatController::class, 'show'])->name('chat.show');
+    Route::post('chat/{user}', [\App\Http\Controllers\ChatController::class, 'store'])->name('chat.store');
     Route::get('calendar', [\App\Http\Controllers\CalendarController::class, 'index'])->name('calendar');
     Route::post('feed/{feed}/follow', [\App\Http\Controllers\CalendarController::class, 'toggleFollow'])->name('feed.follow');
     Route::post('feed', [\App\Http\Controllers\FeedController::class, 'store'])->name('feed.store');

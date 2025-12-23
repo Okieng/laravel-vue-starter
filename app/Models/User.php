@@ -59,4 +59,24 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Feed::class, 'feed_user');
     }
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
+    public function scopeWithIsActive($query)
+    {
+        return $query->addSelect(['is_active' => function ($query) {
+            $query->selectRaw('count(*)')
+                ->from('sessions')
+                ->whereColumn('user_id', 'users.id')
+                ->where('last_activity', '>', now()->subMinutes(5)->getTimestamp());
+        }]);
+    }
 }
