@@ -16,9 +16,11 @@ Route::get('dashboard', function () {
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::post('feed', [\App\Http\Controllers\FeedController::class, 'store'])
-    ->middleware(['auth', 'verified'])
-    ->name('feed.store');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('calendar', [\App\Http\Controllers\CalendarController::class, 'index'])->name('calendar');
+    Route::post('feed/{feed}/follow', [\App\Http\Controllers\CalendarController::class, 'toggleFollow'])->name('feed.follow');
+    Route::post('feed', [\App\Http\Controllers\FeedController::class, 'store'])->name('feed.store');
+});
 
 Route::resource('employees', \App\Http\Controllers\EmployeeController::class)
     ->middleware(['auth', 'verified']);

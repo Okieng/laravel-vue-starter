@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Feed::class);
     }
+
+    public function followedFeeds()
+    {
+        return $this->belongsToMany(Feed::class, 'feed_user');
+    }
 }

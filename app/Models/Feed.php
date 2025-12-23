@@ -30,4 +30,9 @@ class Feed extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'feed_user');
+    }
 }

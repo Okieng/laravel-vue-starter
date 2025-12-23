@@ -15,7 +15,7 @@ import { dashboard } from '@/routes';
 import { index as employeesIndex } from '@/routes/employees';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Users } from 'lucide-vue-next';
+import { BookOpen, Calendar, Folder, LayoutGrid, Users } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -28,6 +28,11 @@ const mainNavItems: NavItem[] = [
         title: 'Employees',
         href: employeesIndex(),
         icon: Users,
+    },
+    {
+        title: 'Calendar',
+        href: '/calendar',
+        icon: Calendar,
     },
 ];
 

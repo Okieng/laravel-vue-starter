@@ -49,6 +49,7 @@ export interface Feed {
     images?: string[];
     file_attachment?: string[];
     is_pinned: boolean;
+    is_followed: boolean;
     likes_count: number;
     comments_count: number;
     created_at: string;
