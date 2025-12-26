@@ -15,7 +15,7 @@ import { index as employeesIndex } from '@/routes/employees';
 import { type NavItem } from '@/types';
 import { computed } from 'vue';
 import { usePage, Link } from '@inertiajs/vue3';
-import { BookOpen, Calendar, Folder, LayoutGrid, MessageCircle, Users } from 'lucide-vue-next';
+import { BookOpen, Calendar, Folder, LayoutGrid, MessageCircle, Users, Presentation } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const page = usePage();
@@ -40,6 +40,12 @@ const mainNavItems = computed(() => [
         title: 'Chat',
         href: '/chat',
         icon: MessageCircle,
+        badge: page.props.auth.unreadMessageCount as number,
+    },
+    {
+        title: 'Room Booking',
+        href: '/chat',
+        icon: Presentation,
         badge: page.props.auth.unreadMessageCount as number,
     },
 ]);

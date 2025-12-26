@@ -1,33 +1,35 @@
-<script setup lang="ts">
+<script setup>
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem, type Message, type User } from '@/types';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { useIntervalFn } from '@vueuse/core';
-import { Send } from 'lucide-vue-next';
+import { Send, MessageCircle } from 'lucide-vue-next';
 import { nextTick, onMounted, ref, watch } from 'vue';
 
 defineOptions({
     name: 'Chat',
 });
 
-const props = defineProps<{
-    users: User[];
-}>();
+const props = defineProps({
+    users: {
+        type: Array,
+        required: true,
+    },
+});
 
 const page = usePage();
 const authUser = page.props.auth.user;
 
-const breadcrumbs: BreadcrumbItem[] = [
+const breadcrumbs = [
     {
         title: 'Chat',
         href: '/chat',
     },
 ];
 
-const selectedUser = ref<User | null>(null);
-const messages = ref<Message[]>([]);
+const selectedUser = ref(null);
+const messages = ref([]);
 const newMessage = ref('');
-const messagesContainer = ref<HTMLElement | null>(null);
+const messagesContainer = ref(null);
 const isSending = ref(false);
 
 const scrollToBottom = async () => {
@@ -48,7 +50,7 @@ const fetchMessages = async () => {
     }
 };
 
-const selectUser = async (user: User) => {
+const selectUser = async (user) => {
     selectedUser.value = user;
     await fetchMessages();
     scrollToBottom();

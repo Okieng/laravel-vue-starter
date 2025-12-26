@@ -1,6 +1,5 @@
-<script setup lang="ts">
+<script setup>
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem, type Feed } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { Calendar1 } from 'lucide-vue-next';
 
@@ -9,18 +8,21 @@ defineOptions({
     name: 'Calendar',
 });
 
-const props = defineProps<{
-    events: Feed[];
-}>();
+const props = defineProps({
+    events: {
+        type: Array,
+        required: true,
+    },
+});
 
-const breadcrumbs: BreadcrumbItem[] = [
+const breadcrumbs = [
     {
         title: 'Calendar',
         href: '/calendar',
     },
 ];
 
-const toggleFollow = (feedId: number) => {
+const toggleFollow = (feedId) => {
     router.post(`/feed/${feedId}/follow`, {}, {
         preserveScroll: true,
     });
