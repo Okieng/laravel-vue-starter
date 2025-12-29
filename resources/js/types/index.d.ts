@@ -54,8 +54,20 @@ export interface Feed {
     file_attachment?: string[];
     is_pinned: boolean;
     is_followed: boolean;
+    is_liked: boolean;
     likes_count: number;
     comments_count: number;
+    comments: Comment[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Comment {
+    id: number;
+    user_id: number;
+    user: User;
+    feed_id: number;
+    content: string;
     created_at: string;
     updated_at: string;
 }

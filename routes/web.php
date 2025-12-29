@@ -12,7 +12,12 @@ Route::get('/', function () {
 
 Route::get('dashboard', function () {
     return Inertia::render('Dashboard', [
-        'feeds' => \App\Models\Feed::with('user')->latest()->get(),
+        'feeds' => \App\Models\Feed::with(['user', 'comments.user'])
+            ->withExists(['likes as is_liked' => function($query) {
+                $query->where('user_id', auth()->id());
+            }])
+            ->latest()
+            ->get(),
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -23,6 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('calendar', [\App\Http\Controllers\CalendarController::class, 'index'])->name('calendar');
     Route::post('feed/{feed}/follow', [\App\Http\Controllers\CalendarController::class, 'toggleFollow'])->name('feed.follow');
     Route::post('feed', [\App\Http\Controllers\FeedController::class, 'store'])->name('feed.store');
+    Route::post('feed/{feed}/like', [\App\Http\Controllers\LikeController::class, 'toggle'])->name('feed.like');
+    Route::post('feed/{feed}/comment', [\App\Http\Controllers\CommentController::class, 'store'])->name('feed.comment.store');
+    Route::delete('comment/{comment}', [\App\Http\Controllers\CommentController::class, 'destroy'])->name('feed.comment.destroy');
 });
 
 Route::resource('employees', \App\Http\Controllers\EmployeeController::class)

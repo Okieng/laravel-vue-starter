@@ -70,6 +70,16 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'receiver_id');
     }
 
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     public function scopeWithIsActive($query)
     {
         return $query->addSelect(['is_active' => function ($query) {

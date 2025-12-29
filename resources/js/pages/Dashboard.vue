@@ -1,15 +1,45 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import { type BreadcrumbItem, type Feed } from '@/types';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { MessageSquare, Check, Calendar, Vote, File, Image, Link, Globe, Calendar1, ThumbsUp, MessageSquareText, Pin, Share, EllipsisVertical, FileText, Download } from 'lucide-vue-next';
+import { type BreadcrumbItem, type Feed, type Comment as CommentType } from '@/types';
+import { Head, useForm, usePage, router } from '@inertiajs/vue3';
+import { MessageSquare, Check, Calendar, Vote, File, Image, Link, Globe, Calendar1, ThumbsUp, MessageSquareText, Pin, Share, EllipsisVertical, FileText, Download, Send, Trash2 } from 'lucide-vue-next';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps<{
     feeds: Feed[];
 }>();
 
 const page = usePage();
+
+// Listen for real-time updates
+onMounted(() => {
+    if (window.Echo) {
+        window.Echo.channel('feeds')
+            .listen('CommentCreated', (e: { comment: CommentType }) => {
+                const feed = props.feeds.find(f => f.id === e.comment.feed_id);
+                if (feed) {
+                    // Avoid duplicate comments if we were the sender (though toOthers handles this)
+                    if (!feed.comments.find(c => c.id === e.comment.id)) {
+                        feed.comments.push(e.comment);
+                        feed.comments_count++;
+                    }
+                }
+            })
+            .listen('LikeToggled', (e: { feedId: number, likesCount: number }) => {
+                const feed = props.feeds.find(f => f.id === e.feedId);
+                if (feed) {
+                    feed.likes_count = e.likesCount;
+                }
+            });
+    }
+});
+
+onUnmounted(() => {
+    if (window.Echo) {
+        window.Echo.leaveChannel('feeds');
+    }
+});
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,6 +56,9 @@ const form = useForm({
     is_pinned: false,
 });
 
+const commentForms = ref<Record<number, string>>({});
+const activeCommentSection = ref<number | null>(null);
+
 const submit = () => {
     form.post('/feed', {
         onSuccess: () => {
@@ -35,6 +68,44 @@ const submit = () => {
             }
         },
     });
+};
+
+const toggleLike = (feedId: number) => {
+    router.post(`/feed/${feedId}/like`, {}, {
+        preserveScroll: true,
+    });
+};
+
+const toggleComments = (feedId: number) => {
+    if (activeCommentSection.value === feedId) {
+        activeCommentSection.value = null;
+    } else {
+        activeCommentSection.value = feedId;
+        if (!commentForms.value[feedId]) {
+            commentForms.value[feedId] = '';
+        }
+    }
+};
+
+const submitComment = (feedId: number) => {
+    if (!commentForms.value[feedId]?.trim()) return;
+
+    router.post(`/feed/${feedId}/comment`, {
+        content: commentForms.value[feedId]
+    }, {
+        preserveScroll: true,
+        onSuccess: () => {
+            commentForms.value[feedId] = '';
+        }
+    });
+};
+
+const deleteComment = (commentId: number) => {
+    if (confirm('Are you sure you want to delete this comment?')) {
+        router.delete(`/comment/${commentId}`, {
+            preserveScroll: true
+        });
+    }
 };
 </script>
 
@@ -244,13 +315,14 @@ const submit = () => {
                         <div
                             class="bg-background-light/50 dark:bg-background-dark/50 px-5 py-3 border-t border-border-light dark:border-border-dark flex items-center justify-between">
                             <div class="flex gap-4">
-                                <button
-                                    class="flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-primary transition-colors">
-                                    <ThumbsUp /> Like <span
+                                <button @click="toggleLike(feed.id)"
+                                    :class="[feed.is_liked ? 'text-primary' : 'text-text-muted hover:text-primary']"
+                                    class="flex items-center gap-1.5 text-sm font-medium transition-colors">
+                                    <ThumbsUp :class="{ 'fill-current': feed.is_liked }" /> Like <span
                                         class="bg-white dark:bg-surface-dark px-1.5 rounded text-xs border border-border-light dark:border-border-dark ml-1">{{
                                             feed.likes_count }}</span>
                                 </button>
-                                <button
+                                <button @click="toggleComments(feed.id)"
                                     class="flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-primary transition-colors">
                                     <MessageSquareText /> Comment <span
                                         class="bg-white dark:bg-surface-dark px-1.5 rounded text-xs border border-border-light dark:border-border-dark ml-1">{{
@@ -261,6 +333,47 @@ const submit = () => {
                                 class="flex items-center gap-1 text-xs font-medium text-text-muted hover:text-primary">
                                 <Share /> Share
                             </button>
+                        </div>
+
+                        <!-- Comment Section (Pinned) -->
+                        <div v-if="activeCommentSection === feed.id"
+                            class="px-5 py-4 border-t border-border-light dark:border-border-dark bg-background-light/20 dark:bg-background-dark/20">
+                            <div class="space-y-4 mb-4">
+                                <div v-for="comment in feed.comments" :key="comment.id" class="flex gap-3">
+                                    <div class="bg-center bg-no-repeat bg-cover rounded-full size-8 shrink-0"
+                                        :style="{ backgroundImage: `url(${comment.user.avatar || 'https://ui-avatars.com/api/?name=' + comment.user.name})` }">
+                                    </div>
+                                    <div
+                                        class="flex-1 bg-white dark:bg-surface-dark rounded-2xl px-4 py-2 shadow-sm relative group">
+                                        <div class="flex justify-between items-start">
+                                            <h5 class="font-bold text-xs text-text-main dark:text-white">{{
+                                                comment.user.name }}</h5>
+                                            <button v-if="comment.user_id === page.props.auth.user.id"
+                                                @click="deleteComment(comment.id)"
+                                                class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-600 transition-opacity">
+                                                <Trash2 class="size-3" />
+                                            </button>
+                                        </div>
+                                        <p class="text-sm text-text-main dark:text-gray-300">{{ comment.content }}</p>
+                                        <span class="text-[10px] text-text-muted mt-1 block">{{ new
+                                            Date(comment.created_at).toLocaleString() }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 mt-2">
+                                <div class="bg-center bg-no-repeat bg-cover rounded-full size-8 shrink-0"
+                                    :style="{ backgroundImage: `url(${page.props.auth.user.avatar || 'https://ui-avatars.com/api/?name=' + page.props.auth.user.name})` }">
+                                </div>
+                                <div class="flex-1 relative">
+                                    <input v-model="commentForms[feed.id]" type="text" placeholder="Write a comment..."
+                                        class="w-full bg-white dark:bg-surface-dark border-border-light dark:border-border-dark rounded-full px-4 py-1.5 text-sm focus:ring-primary focus:border-primary pr-10"
+                                        @keyup.enter="submitComment(feed.id)" />
+                                    <button @click="submitComment(feed.id)"
+                                        class="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:text-blue-600 p-1">
+                                        <Send class="size-4" />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </article>
 
@@ -297,18 +410,60 @@ const submit = () => {
                         <div
                             class="bg-background-light/50 dark:bg-background-dark/50 px-5 py-3 border-t border-border-light dark:border-border-dark">
                             <div class="flex gap-4">
-                                <button
-                                    class="flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-primary transition-colors">
-                                    <ThumbsUp /> Like <span
+                                <button @click="toggleLike(feed.id)"
+                                    :class="[feed.is_liked ? 'text-primary' : 'text-text-muted hover:text-primary']"
+                                    class="flex items-center gap-1.5 text-sm font-medium transition-colors">
+                                    <ThumbsUp :class="{ 'fill-current': feed.is_liked }" /> Like <span
                                         class="bg-white dark:bg-surface-dark px-1.5 rounded text-xs border border-border-light dark:border-border-dark ml-1">{{
                                             feed.likes_count }}</span>
                                 </button>
-                                <button
+                                <button @click="toggleComments(feed.id)"
                                     class="flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-primary transition-colors">
                                     <MessageSquareText /> Comment <span
                                         class="bg-white dark:bg-surface-dark px-1.5 rounded text-xs border border-border-light dark:border-border-dark ml-1">{{
                                             feed.comments_count }}</span>
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- Comment Section (Standard) -->
+                        <div v-if="activeCommentSection === feed.id"
+                            class="px-5 py-4 border-t border-border-light dark:border-border-dark bg-background-light/20 dark:bg-background-dark/20">
+                            <div class="space-y-4 mb-4">
+                                <div v-for="comment in feed.comments" :key="comment.id" class="flex gap-3">
+                                    <div class="bg-center bg-no-repeat bg-cover rounded-full size-8 shrink-0"
+                                        :style="{ backgroundImage: `url(${comment.user.avatar || 'https://ui-avatars.com/api/?name=' + comment.user.name})` }">
+                                    </div>
+                                    <div
+                                        class="flex-1 bg-white dark:bg-surface-dark rounded-2xl px-4 py-2 shadow-sm relative group">
+                                        <div class="flex justify-between items-start">
+                                            <h5 class="font-bold text-xs text-text-main dark:text-white">{{
+                                                comment.user.name }}</h5>
+                                            <button v-if="comment.user_id === page.props.auth.user.id"
+                                                @click="deleteComment(comment.id)"
+                                                class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-600 transition-opacity">
+                                                <Trash2 class="size-3" />
+                                            </button>
+                                        </div>
+                                        <p class="text-sm text-text-main dark:text-gray-300">{{ comment.content }}</p>
+                                        <span class="text-[10px] text-text-muted mt-1 block">{{ new
+                                            Date(comment.created_at).toLocaleString() }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 mt-2">
+                                <div class="bg-center bg-no-repeat bg-cover rounded-full size-8 shrink-0"
+                                    :style="{ backgroundImage: `url(${page.props.auth.user.avatar || 'https://ui-avatars.com/api/?name=' + page.props.auth.user.name})` }">
+                                </div>
+                                <div class="flex-1 relative">
+                                    <input v-model="commentForms[feed.id]" type="text" placeholder="Write a comment..."
+                                        class="w-full bg-white dark:bg-surface-dark border-border-light dark:border-border-dark rounded-full px-4 py-1.5 text-sm focus:ring-primary focus:border-primary pr-10"
+                                        @keyup.enter="submitComment(feed.id)" />
+                                    <button @click="submitComment(feed.id)"
+                                        class="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:text-blue-600 p-1">
+                                        <Send class="size-4" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </article>

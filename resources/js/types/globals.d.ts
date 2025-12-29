@@ -17,6 +17,13 @@ declare module '@inertiajs/core' {
     interface PageProps extends InertiaPageProps, AppPageProps {}
 }
 
+declare global {
+    interface Window {
+        Pusher: any;
+        Echo: any;
+    }
+}
+
 declare module 'vue' {
     interface ComponentCustomProperties {
         $inertia: typeof Router;
