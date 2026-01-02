@@ -105,8 +105,8 @@ const submit = () => {
                             class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                             required :disabled="!form.start_time || !form.end_time || isChecking">
                             <option value="" disabled>
-                                {{ isChecking ? 'Checking availability...' : (form.start_time && form.end_time ? 'Select
-                                a room' : 'Select dates first') }}
+                                {{ isChecking ? 'Checking availability...' : (form.start_time && form.end_time ?
+                                    'Select a room' : 'Select dates first') }}
                             </option>
                             <option v-for="room in rooms" :key="room.id" :value="room.id" :disabled="room.is_booked"
                                 class="disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700">
