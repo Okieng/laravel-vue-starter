@@ -36,4 +36,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::resource('employees', \App\Http\Controllers\EmployeeController::class)
     ->middleware(['auth', 'verified']);
 
+Route::resource('rooms', \App\Http\Controllers\RoomController::class)
+    ->middleware(['auth', 'verified']);
+
+Route::resource('room-bookings', \App\Http\Controllers\RoomBookingController::class)
+    ->middleware(['auth', 'verified']);
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/attendance/current', [\App\Http\Controllers\AttendanceController::class, 'current'])->name('attendance.current');
+    Route::post('/attendance/check-in', [\App\Http\Controllers\AttendanceController::class, 'store'])->name('attendance.store');
+    Route::put('/attendance/{attendance}/check-out', [\App\Http\Controllers\AttendanceController::class, 'update'])->name('attendance.update');
+});
+
 require __DIR__.'/settings.php';

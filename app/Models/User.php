@@ -80,6 +80,11 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
+    public function roomBookings()
+    {
+        return $this->hasMany(RoomBooking::class);
+    }
+
     public function scopeWithIsActive($query)
     {
         return $query->addSelect(['is_active' => function ($query) {
