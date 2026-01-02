@@ -10,6 +10,7 @@ class Attendance extends Model
         'user_id',
         'check_in_time',
         'check_out_time',
+        'report',
     ];
 
     protected $casts = [

@@ -12,6 +12,15 @@ import type { User } from '@/types';
 import { Link, router } from '@inertiajs/vue3';
 import { LogOut, Settings, Clock, CheckCircle } from 'lucide-vue-next';
 import { onMounted, onUnmounted, ref, computed } from 'vue';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import axios from 'axios';
 
 interface Props {
@@ -79,12 +88,19 @@ const checkIn = async () => {
     }
 };
 
+const isReportDialogOpen = ref(false);
+const reportText = ref('');
+
 const checkOut = async () => {
     if (!attendance.value) return;
     isLoading.value = true;
     try {
-        const response = await axios.put(`/attendance/${attendance.value.id}/check-out`);
+        const response = await axios.put(`/attendance/${attendance.value.id}/check-out`, {
+            report: reportText.value
+        });
         attendance.value = null;
+        reportText.value = '';
+        isReportDialogOpen.value = false;
         stopTimer();
     } catch (error) {
         console.error('Check-out failed', error);
@@ -123,11 +139,37 @@ onUnmounted(() => {
                 <CheckCircle class="h-3 w-3" />
                 Check In
             </button>
-            <button @click="checkOut" :disabled="!attendance || isLoading"
-                class="flex items-center justify-center gap-2 rounded-md bg-red-600 px-2 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-red-700 dark:hover:bg-red-600">
-                <LogOut class="h-3 w-3" />
-                Check Out
-            </button>
+            <Dialog v-model:open="isReportDialogOpen">
+                <DialogTrigger as-child>
+                    <button :disabled="!attendance || isLoading"
+                        class="flex items-center justify-center gap-2 rounded-md bg-red-600 px-2 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-red-700 dark:hover:bg-red-600">
+                        <LogOut class="h-3 w-3" />
+                        Check Out
+                    </button>
+                </DialogTrigger>
+                <DialogContent class="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Daily Report</DialogTitle>
+                        <DialogDescription>
+                            Please submit your daily report before checking out.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div class="grid gap-4 py-4">
+                        <div class="grid gap-2">
+                            <Label htmlFor="report">Report</Label>
+                            <Textarea id="report" v-model="reportText" placeholder="What did you work on today?" />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="button" variant="secondary" @click="isReportDialogOpen = false">
+                            Cancel
+                        </Button>
+                        <Button type="submit" @click="checkOut" :disabled="isLoading">
+                            {{ isLoading ? 'Checking out...' : 'Confirm Check Out' }}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     </div>
 

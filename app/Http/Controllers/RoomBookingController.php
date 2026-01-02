@@ -27,9 +27,39 @@ class RoomBookingController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $rooms = Room::all();
+
+        if ($request->has(['start_time', 'end_time'])) {
+            $start = $request->input('start_time');
+            $end = $request->input('end_time');
+
+            $rooms->transform(function ($room) use ($start, $end) {
+                $booking = RoomBooking::with('user')
+                    ->where('room_id', $room->id)
+                    ->where(function ($query) use ($start, $end) {
+                        $query->whereBetween('start_time', [$start, $end])
+                            ->orWhereBetween('end_time', [$start, $end])
+                            ->orWhere(function ($q) use ($start, $end) {
+                                $q->where('start_time', '<=', $start)
+                                    ->where('end_time', '>=', $end);
+                            });
+                    })
+                    ->first();
+
+                if ($booking) {
+                    $room->is_booked = true;
+                    $room->booked_by = $booking->user->name;
+                    $room->event_name = $booking->event_name;
+                } else {
+                    $room->is_booked = false;
+                }
+
+                return $room;
+            });
+        }
+
         return Inertia::render('RoomBookings/Create', [
             'rooms' => $rooms,
         ]);

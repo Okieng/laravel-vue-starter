@@ -4,14 +4,18 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Head, useForm, Link } from '@inertiajs/vue3';
+import { Head, useForm, Link, router } from '@inertiajs/vue3';
 import { index, store } from '@/routes/room-bookings';
+import { watch, ref } from 'vue';
 
 const props = defineProps<{
     rooms: Array<{
         id: number;
         name: string;
         capacity: number;
+        is_booked?: boolean;
+        booked_by?: string;
+        event_name?: string;
     }>;
 }>();
 
@@ -21,6 +25,31 @@ const form = useForm({
     start_time: '',
     end_time: '',
 });
+
+const isChecking = ref(false);
+let debounceTimer: number | null = null;
+
+const checkAvailability = () => {
+    if (form.start_time && form.end_time) {
+        if (debounceTimer) clearTimeout(debounceTimer);
+        isChecking.value = true;
+        debounceTimer = setTimeout(() => {
+            router.reload({
+                only: ['rooms'],
+                data: {
+                    start_time: form.start_time,
+                    end_time: form.end_time,
+                },
+                onFinish: () => {
+                    isChecking.value = false;
+                }
+            });
+        }, 500);
+    }
+};
+
+watch(() => form.start_time, checkAvailability);
+watch(() => form.end_time, checkAvailability);
 
 const submit = () => {
     form.post(store().url);
@@ -56,19 +85,6 @@ const submit = () => {
                         <InputError :message="form.errors.event_name" />
                     </div>
 
-                    <div class="space-y-2">
-                        <Label for="room_id">Room</Label>
-                        <select id="room_id" v-model="form.room_id"
-                            class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                            required>
-                            <option value="" disabled>Select a room</option>
-                            <option v-for="room in rooms" :key="room.id" :value="room.id">
-                                {{ room.name }} (Capacity: {{ room.capacity }})
-                            </option>
-                        </select>
-                        <InputError :message="form.errors.room_id" />
-                    </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <Label for="start_time">Start Time</Label>
@@ -81,6 +97,27 @@ const submit = () => {
                             <Input id="end_time" v-model="form.end_time" type="datetime-local" required />
                             <InputError :message="form.errors.end_time" />
                         </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <Label for="room_id">Room</Label>
+                        <select id="room_id" v-model="form.room_id"
+                            class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                            required :disabled="!form.start_time || !form.end_time || isChecking">
+                            <option value="" disabled>
+                                {{ isChecking ? 'Checking availability...' : (form.start_time && form.end_time ? 'Select
+                                a room' : 'Select dates first') }}
+                            </option>
+                            <option v-for="room in rooms" :key="room.id" :value="room.id" :disabled="room.is_booked"
+                                class="disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700">
+                                {{ room.name }} (Capacity: {{ room.capacity }})
+                                {{ room.is_booked ? `[Booked by ${room.booked_by}: ${room.event_name}]` : '' }}
+                            </option>
+                        </select>
+                        <p v-if="!form.start_time || !form.end_time" class="text-xs text-gray-500">
+                            Please select start and end times to see available rooms.
+                        </p>
+                        <InputError :message="form.errors.room_id" />
                     </div>
 
                     <div class="flex items-center gap-4">

@@ -43,12 +43,13 @@ class AttendanceController extends Controller
             abort(403);
         }
 
-        // $request->validate([
-        //     'check_out_time' => 'required|date|after:check_in_time',
-        // ]);
+        $request->validate([
+            'report' => 'nullable|string|max:1000',
+        ]);
 
         $attendance->update([
             'check_out_time' => now(),
+            'report' => $request->report,
         ]);
 
         return response()->json([
