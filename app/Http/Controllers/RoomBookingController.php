@@ -13,14 +13,23 @@ class RoomBookingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $year = $request->input('year', now()->year);
+        $month = $request->input('month', now()->month);
+
         $bookings = RoomBooking::with(['room', 'user'])
-            ->latest('start_time')
-            ->paginate(10);
+            ->whereYear('start_time', $year)
+            ->whereMonth('start_time', $month)
+            ->orderBy('start_time')
+            ->get();
 
         return Inertia::render('RoomBookings/Index', [
             'bookings' => $bookings,
+            'currentDate' => [
+                'year' => (int) $year,
+                'month' => (int) $month,
+            ],
         ]);
     }
 
