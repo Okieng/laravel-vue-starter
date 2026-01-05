@@ -124,7 +124,9 @@ const submit = () => {
                         <Link :href="index().url">
                             <Button variant="outline" type="button">Cancel</Button>
                         </Link>
-                        <Button type="submit" :disabled="form.processing">
+                        <Button
+                            class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            type="submit" :disabled="form.processing">
                             Confirm Booking
                         </Button>
                     </div>

@@ -30,8 +30,8 @@ const props = defineProps<{
 }>();
 
 const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
 ];
 
 const currentMonthName = computed(() => monthNames[props.currentDate.month - 1]);
@@ -45,7 +45,7 @@ const calendarDays = computed(() => {
 
     const days = [];
 
-    // Empty slots for days before the first day of the month
+    // Empty slots for days before the first day of the month (biar tgl 1 gk selalu di awal)
     for (let i = 0; i < firstDayOfWeek; i++) {
         days.push({ day: null, date: null });
     }
@@ -53,10 +53,10 @@ const calendarDays = computed(() => {
     // Days of the month
     for (let i = 1; i <= daysInMonth; i++) {
         const date = new Date(year, month, i);
-        const dateString = date.toLocaleDateString('en-CA'); // YYYY-MM-DD format for easier comparison
+        const dateString = date.toLocaleDateString('id-ID'); // YYYY-MM-DD
 
         const dayBookings = props.bookings.filter(booking => {
-            const bookingDate = new Date(booking.start_time).toLocaleDateString('en-CA');
+            const bookingDate = new Date(booking.start_time).toLocaleDateString('id-ID');
             return bookingDate === dateString;
         });
 
@@ -70,7 +70,7 @@ const calendarDays = computed(() => {
     return days;
 });
 
-const changeMonth = (offset: number) => {
+const gantiBulan = (offset: number) => {
     let newMonth = props.currentDate.month + offset;
     let newYear = props.currentDate.year;
 
@@ -174,7 +174,7 @@ const formatTime = (dateString: string) => {
                 <div class="flex items-center gap-4">
                     <div
                         class="flex items-center rounded-lg bg-white p-1 shadow-sm ring-1 ring-gray-900/5 dark:bg-gray-800 dark:ring-gray-700">
-                        <button @click="changeMonth(-1)"
+                        <button @click="gantiBulan(-1)"
                             class="rounded-md p-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                             <ChevronLeft class="h-5 w-5" />
                         </button>
@@ -182,7 +182,7 @@ const formatTime = (dateString: string) => {
                             class="min-w-[140px] px-4 text-center text-sm font-semibold text-gray-900 dark:text-white">
                             {{ currentMonthName }} {{ currentDate.year }}
                         </span>
-                        <button @click="changeMonth(1)"
+                        <button @click="gantiBulan(1)"
                             class="rounded-md p-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                             <ChevronRight class="h-5 w-5" />
                         </button>
@@ -199,13 +199,13 @@ const formatTime = (dateString: string) => {
             <div class="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
                 <div
                     class="grid grid-cols-7 border-b border-gray-200 bg-gray-50 text-center text-xs font-semibold leading-6 text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-                    <div class="py-2">Sun</div>
-                    <div class="py-2">Mon</div>
-                    <div class="py-2">Tue</div>
-                    <div class="py-2">Wed</div>
-                    <div class="py-2">Thu</div>
-                    <div class="py-2">Fri</div>
-                    <div class="py-2">Sat</div>
+                    <div class="py-2">Minggu</div>
+                    <div class="py-2">Senin</div>
+                    <div class="py-2">Selasa</div>
+                    <div class="py-2">Rabu</div>
+                    <div class="py-2">Kamis</div>
+                    <div class="py-2">Jum'at</div>
+                    <div class="py-2">Sabtu</div>
                 </div>
                 <div class="grid grid-cols-7 text-sm">
                     <div v-for="(day, index) in calendarDays" :key="index"
