@@ -60,7 +60,7 @@ defineProps<{
                     </div>
 
                     <div class="mb-10 text-center lg:text-left">
-                        <h2 class="text-3xl font-bold mb-2">Selamat Datang!</h2>
+                        <h2 class="text-5xl font-bold mb-2">Selamat Datang!</h2>
                         <p class="text-slate-500 dark:text-slate-400">
                             Please enter your credentials to access the platform.
                         </p>
