@@ -114,8 +114,8 @@ const deleteComment = (commentId: number) => {
     <Head title="Feed" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+        <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 bg-slate-100 dark:bg-slate-50">
+            <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-700 bg-white dark:bg-black rounded-xl">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">Feed</h3>
                 <p class="text-xs text-gray-500">Check the latest updates from your team</p>
             </div>
@@ -124,7 +124,7 @@ const deleteComment = (commentId: number) => {
                 <!-- Main Feed Section -->
                 <div class="lg:col-span-3 space-y-6">
                     <div
-                        class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+                        class="rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden bg-white dark:bg-black">
                         <!-- Composer Tabs -->
                         <div
                             class="flex border-b border-border-light dark:border-border-dark px-2 bg-background-light/50 dark:bg-surface-dark">
@@ -224,7 +224,7 @@ const deleteComment = (commentId: number) => {
                                     class="absolute top-4 right-4 text-yellow-500 transform rotate-12">
                                     <Pin />
                                 </div>
-                                <div class="p-5">
+                                <div class="p-5 bg-white">
                                     <div class="flex items-center gap-3 mb-4">
                                         <div class="bg-center bg-no-repeat bg-cover rounded-full size-10"
                                             :style="{ backgroundImage: `url(${feed.user.avatar || 'https://ui-avatars.com/api/?name=' + feed.user.name})` }">
@@ -268,7 +268,7 @@ const deleteComment = (commentId: number) => {
                                     </div>
                                 </div>
                                 <div
-                                    class="bg-background-light/50 dark:bg-background-dark/50 px-5 py-3 border-t border-border-light dark:border-border-dark flex items-center justify-between">
+                                    class="bg-white dark:bg-background-dark/50 px-5 py-3 border-t border-border-light dark:border-border-dark flex items-center justify-between">
                                     <div class="flex gap-4">
                                         <button @click="toggleLike(feed.id)"
                                             :class="[feed.is_liked ? 'text-primary' : 'text-text-muted hover:text-primary']"
@@ -292,7 +292,7 @@ const deleteComment = (commentId: number) => {
 
                                 <!-- Comment Section (Pinned) -->
                                 <div v-if="activeCommentSection === feed.id"
-                                    class="px-5 py-4 border-t border-border-light dark:border-border-dark bg-background-light/20 dark:bg-background-dark/20">
+                                    class="px-5 py-4 border-t border-border-light dark:border-border-dark bg-white dark:bg-background-dark/20">
                                     <div class="space-y-4 mb-4">
                                         <div v-for="comment in feed.comments" :key="comment.id" class="flex gap-3">
                                             <div class="bg-center bg-no-repeat bg-cover rounded-full size-8 shrink-0"
@@ -337,7 +337,7 @@ const deleteComment = (commentId: number) => {
                             <!-- Standard Post -->
                             <article v-else
                                 class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
-                                <div class="p-5">
+                                <div class="p-5 bg-white">
                                     <div class="flex items-center justify-between mb-4">
                                         <div class="flex items-center gap-3">
                                             <div class="bg-center bg-no-repeat bg-cover rounded-full size-10"
@@ -365,7 +365,7 @@ const deleteComment = (commentId: number) => {
                                 </div>
                                 <!-- Reactions / Footer -->
                                 <div
-                                    class="bg-background-light/50 dark:bg-background-dark/50 px-5 py-3 border-t border-border-light dark:border-border-dark">
+                                    class="bg-white dark:bg-black px-5 py-3 border-t border-border-light dark:border-border-dark">
                                     <div class="flex gap-4">
                                         <button @click="toggleLike(feed.id)"
                                             :class="[feed.is_liked ? 'text-primary' : 'text-text-muted hover:text-primary']"
@@ -385,7 +385,7 @@ const deleteComment = (commentId: number) => {
 
                                 <!-- Comment Section (Standard) -->
                                 <div v-if="activeCommentSection === feed.id"
-                                    class="px-5 py-4 border-t border-border-light dark:border-border-dark bg-background-light/20 dark:bg-background-dark/20">
+                                    class="px-5 py-4 border-t border-border-light dark:border-border-dark bg-white dark:bg-background-dark/20">
                                     <div class="space-y-4 mb-4">
                                         <div v-for="comment in feed.comments" :key="comment.id" class="flex gap-3">
                                             <div class="bg-center bg-no-repeat bg-cover rounded-full size-8 shrink-0"
@@ -434,21 +434,27 @@ const deleteComment = (commentId: number) => {
                 <div class="lg:col-span-1 space-y-6">
                     <!-- Birthdays Widget -->
                     <div
-                        class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-5">
+                        class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-5">
                         <div class="flex items-center gap-2 mb-4">
                             <Calendar class="size-5 text-primary" />
                             <h4 class="font-bold text-text-main dark:text-white">Upcoming Birthdays</h4>
                         </div>
                         <div class="space-y-4">
                             <div class="flex items-center gap-3">
-                                <div class="bg-gray-200 dark:bg-gray-700 rounded-full size-9"></div>
+                                <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 shrink-0"
+                                    data-alt="User profile picture"
+                                    :style="{ backgroundImage: `url(${page.props.auth.user.avatar || 'https://ui-avatars.com/api/?name=' + page.props.auth.user.name})` }">
+                                </div>
                                 <div>
                                     <div class="text-sm font-medium text-text-main dark:text-white">Sarah Johnson</div>
                                     <div class="text-xs text-text-muted">Turning 28 • Tomorrow</div>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
-                                <div class="bg-gray-200 dark:bg-gray-700 rounded-full size-9"></div>
+                                <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 shrink-0"
+                                    data-alt="User profile picture"
+                                    :style="{ backgroundImage: `url(${page.props.auth.user.avatar || 'https://ui-avatars.com/api/?name=' + page.props.auth.user.name})` }">
+                                </div>
                                 <div>
                                     <div class="text-sm font-medium text-text-main dark:text-white">Michael Smith</div>
                                     <div class="text-xs text-text-muted">Oct 24</div>
@@ -463,7 +469,7 @@ const deleteComment = (commentId: number) => {
 
                     <!-- Contracts Widget -->
                     <div
-                        class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-5">
+                        class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark p-5">
                         <!-- <div class="flex items-center gap-2 mb-4">
                             <FileText class="size-5 text-primary" />
                             <h4 class="font-bold text-text-main dark:text-white">Contract Renewals</h4>
