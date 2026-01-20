@@ -22,9 +22,15 @@ const page = usePage();
 
 const mainNavItems = computed(() => [
     {
-        title: 'Dashboard',
+        title: 'Feed',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Messenger',
+        href: '/chat',
+        icon: MessageCircle,
+        badge: page.props.auth.unreadMessageCount as number,
     },
     {
         title: 'Employees',
@@ -45,12 +51,6 @@ const mainNavItems = computed(() => [
         title: 'Calendar',
         href: '/calendar',
         icon: Calendar,
-    },
-    {
-        title: 'Chat',
-        href: '/chat',
-        icon: MessageCircle,
-        badge: page.props.auth.unreadMessageCount as number,
     },
 ]);
 
