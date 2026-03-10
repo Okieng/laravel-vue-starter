@@ -26,7 +26,7 @@ const submit = () => {
         { title: 'Create', href: create().url },
     ]">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <!-- Header -->
+
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -45,7 +45,7 @@ const submit = () => {
                 </div>
             </div>
 
-            <!-- Form Card -->
+
             <div
                 class="mx-auto w-full max-w-2xl rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
                 <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-700">
@@ -56,7 +56,7 @@ const submit = () => {
                 <div class="p-6">
                     <form @submit.prevent="submit" class="space-y-6">
                         <div class="grid gap-6 md:grid-cols-2">
-                            <!-- Name -->
+
                             <div class="col-span-2">
                                 <label for="name"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
@@ -71,7 +71,7 @@ const submit = () => {
                                 <InputError :message="form.errors.name" class="mt-2" />
                             </div>
 
-                            <!-- Email -->
+
                             <div class="col-span-2">
                                 <label for="email"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email
@@ -87,7 +87,7 @@ const submit = () => {
                                 <InputError :message="form.errors.email" class="mt-2" />
                             </div>
 
-                            <!-- Position -->
+
                             <div>
                                 <label for="position"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300">Position</label>
@@ -102,7 +102,6 @@ const submit = () => {
                                 <InputError :message="form.errors.position" class="mt-2" />
                             </div>
 
-                            <!-- Department -->
                             <div>
                                 <label for="department"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300">Department</label>

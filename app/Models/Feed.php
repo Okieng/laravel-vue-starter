@@ -17,12 +17,14 @@ class Feed extends Model
         'is_pinned',
         'likes_count',
         'comments_count',
+        'receiver_id',
     ];
 
     protected $casts = [
         'event_date' => 'datetime',
         'images' => 'array',
         'file_attachment' => 'array',
+        'receiver_id' => 'array',
         'is_pinned' => 'boolean',
     ];
 

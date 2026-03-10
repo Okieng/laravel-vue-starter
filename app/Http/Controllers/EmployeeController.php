@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Karyawan;
 
 class EmployeeController extends Controller
 {
@@ -13,15 +14,14 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Employee::query();
+        $query = Karyawan::query();
 
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('position', 'like', "%{$search}%")
-                  ->orWhere('department', 'like', "%{$search}%");
+                $q->where('namakaryawan', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('nik', 'like', "%{$search}%");
             });
         }
 
@@ -30,7 +30,7 @@ class EmployeeController extends Controller
             $direction = $request->input('direction', 'asc');
             $query->orderBy($sort, $direction);
         } else {
-            $query->orderBy('name', 'asc');
+            $query->orderBy('namakaryawan', 'asc');
         }
 
         return Inertia::render('Employees/Index', [

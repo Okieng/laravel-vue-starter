@@ -38,6 +38,10 @@ export interface User {
     updated_at: string;
     unread_count?: number;
     is_active?: boolean;
+    theme_settings?: {
+        background?: string;
+        value?: string;
+    };
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
@@ -60,6 +64,7 @@ export interface Feed {
     comments: Comment[];
     created_at: string;
     updated_at: string;
+    receiver_id?: (string | number)[];
 }
 
 export interface Comment {
@@ -80,5 +85,12 @@ export interface Message {
     receiver?: User;
     content: string;
     read_at?: string;
+    content: string;
+    read_at?: string;
     created_at: string;
+}
+
+export interface Jabatan {
+    idjabatan: number | string;
+    namajabatan: string;
 }

@@ -113,6 +113,20 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'personalia_db' => [
+            'driver' => 'mysql',
+            'host' => env('PERSONALIA_DB_HOST', '127.0.0.1'),
+            'port' => env('PERSONALIA_DB_PORT', '3306'),
+            'database' => env('PERSONALIA_DB_DATABASE', 'forge'),
+            'username' => env('PERSONALIA_DB_USERNAME', 'forge'),
+            'password' => env('PERSONALIA_DB_PASSWORD', ''),
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                PDO::ATTR_PERSISTENT => true,
+            ]) : [],
+            // ...
+        ],
+
     ],
 
     /*

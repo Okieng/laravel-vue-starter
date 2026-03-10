@@ -76,12 +76,12 @@ const sendMessage = async () => {
             newMessage.value = '';
             scrollToBottom();
         } else {
-            console.error('Failed to send message', await response.text());
-            alert('Failed to send message. Please reload the page.');
+            console.error('Zzzzzzzzzzzzz', await response.text());
+            alert('aaaaa');
         }
     } catch (error) {
-        console.error('Failed to send message', error);
-        alert('An error occurred. Please try again.');
+        console.error('Gagal', error);
+        alert('wawawawa');
     } finally {
         isSending.value = false;
     }
@@ -100,16 +100,11 @@ useIntervalFn(() => {
     if (selectedUser.value) {
         fetchMessages();
     }
-    // Also update user list to show new unread counts from other users
     fetchUsers();
 }, 3000);
 
 watch(() => messages.value.length, () => {
-    // Only scroll if we were arguably at the bottom or it's a new load?
-    // For now, let's behave like a simple chat app
-    // scrollToBottom(); 
-    // Actually, constantly scrolling might be annoying if user is reading up history.
-    // Let's only scroll on initial load or send.
+
 });
 
 </script>
@@ -121,7 +116,6 @@ watch(() => messages.value.length, () => {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
             class="flex h-[calc(100vh-8rem)] flex-1 overflow-hidden rounded-xl bg-surface-light dark:bg-surface-dark shadow-sm border border-border-light dark:border-border-dark">
-            <!-- Sidebar: User List -->
             <div
                 class="w-1/3 border-r border-border-light dark:border-border-dark flex flex-col bg-background-light/50 dark:bg-background-dark/50">
                 <div class="p-4 border-b border-border-light dark:border-border-dark">
@@ -157,10 +151,8 @@ watch(() => messages.value.length, () => {
                 </div>
             </div>
 
-            <!-- Main: Chat Window -->
             <div class="flex-1 flex flex-col bg-white dark:bg-zinc-900">
                 <div v-if="selectedUser" class="flex-1 flex flex-col h-full">
-                    <!-- Chat Header -->
                     <div
                         class="p-4 border-b border-border-light dark:border-border-dark flex items-center gap-3 bg-surface-light dark:bg-surface-dark shadow-sm z-10">
                         <div
@@ -176,7 +168,6 @@ watch(() => messages.value.length, () => {
                         </div>
                     </div>
 
-                    <!-- Messages Area -->
                     <div ref="messagesContainer"
                         class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 dark:bg-black/20">
                         <div v-if="messages.length === 0" class="text-center py-10 text-text-muted text-sm">
@@ -199,7 +190,6 @@ watch(() => messages.value.length, () => {
                         </div>
                     </div>
 
-                    <!-- Input Area -->
                     <div
                         class="p-4 border-t border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
                         <form @submit.prevent="sendMessage" class="flex gap-2">
@@ -214,7 +204,6 @@ watch(() => messages.value.length, () => {
                     </div>
                 </div>
 
-                <!-- Empty State -->
                 <div v-else
                     class="flex-1 flex flex-col items-center justify-center text-text-muted bg-gray-50/30 dark:bg-black/10">
                     <div

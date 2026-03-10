@@ -161,7 +161,6 @@ const formatTime = (dateString: string) => {
 
     <AppLayout :breadcrumbs="[{ title: 'Room Bookings', href: index().url }]">
         <div class="flex h-full flex-1 flex-col gap-6 rounded-xl p-4">
-            <!-- Header with Navigation -->
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -195,7 +194,6 @@ const formatTime = (dateString: string) => {
                 </div>
             </div>
 
-            <!-- Calendar Grid -->
             <div class="rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
                 <div
                     class="grid grid-cols-7 border-b border-gray-200 bg-gray-50 text-center text-xs font-semibold leading-6 text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
@@ -232,7 +230,7 @@ const formatTime = (dateString: string) => {
                                     <div class="flex items-center gap-1 text-[10px] text-gray-600 dark:text-gray-400">
                                         <Clock class="h-3 w-3" />
                                         <span>{{ formatTime(booking.start_time) }} - {{ formatTime(booking.end_time)
-                                        }}</span>
+                                            }}</span>
                                     </div>
 
                                     <div class="flex items-center gap-1 text-[10px] text-gray-600 dark:text-gray-400">
